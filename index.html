@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#d95b83">
+<title>A Little Gift For You</title>
+
+<!-- مكتبة Confetti للمؤثرات -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+:root{
+  --pink-light:#fff0f5;
+  --pink-1:#fff0f5;
+  --pink-2:#f8c4d5;
+  --pink-3:#df7899;
+  --pink-4:#c94f76;
+  --pink:#f8c4d5;
+  --pink-mid:#df7899;
+  --pink-dark:#c94f76;
+  --ribbon:#f7d7e2;
+  --shadow:rgba(92,20,47,.24);
+  --gold:#f6d998;
+  --gold-hi:#fff6e0;
+  --accent-pink: #ff758c;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{width:100%; min-height:100vh; overflow-x:hidden;}
+
+body{
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  color:white;
+  background: linear-gradient(160deg,#f8cbd9 0%,#e989a7 48%,#bd5277 100%);
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+
+/* Prevent manual scrolling and user interactions on the page layout */
+html, body {
+  overflow: hidden !important; /* Hide scrollbars & disable manual overflow scrolling */
+  touch-action: none !important; /* Disable touch gestures like pinch, swipe, and scroll */
+  user-select: none; /* Prevent text selection during automatic transitions */
+  -webkit-user-select: none;
+}
+
+/* Ensure the main timeline section can still receive smooth programmatic scrolling */
+.timeline-viewport {
+  overflow-y: hidden !important; /* Disables manual scrolling in the timeline box */
+  touch-action: none !important;
+}
+
+/* ==========================================
+   SECTION 1: THE GIFT BOX
+   ========================================== */
+.scene{
+  position:relative;
+  width:100%;
+  height:100dvh;
+  min-height:560px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  isolation:isolate;
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.glow{
+  position:absolute; width:80vw; height:80vw; max-width:430px; max-height:430px;
+  border-radius:50%; background:rgba(255,255,255,.13); filter:blur(45px);
+  top:8%; left:50%; transform:translateX(-50%);
+  animation:breathe 4s ease-in-out infinite;
+}
+@keyframes breathe{50%{transform:translateX(-50%) scale(1.08);opacity:.72}}
+
+.sparkles,.hearts{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.sparkle{
+  position:absolute;width:4px;height:4px;border-radius:50%;
+  background:white;box-shadow:0 0 12px 4px rgba(255,255,255,.7);
+  opacity:0;animation:floatUp linear infinite;
+}
+.heart{
+  position:absolute;color:rgba(255,255,255,.26);
+  font-size:clamp(18px,5vw,30px); filter:blur(.2px);
+  animation:heartFloat linear infinite;
+}
+@keyframes floatUp{
+  0%{transform:translateY(25px) scale(.5);opacity:0}
+  15%{opacity:.85} 85%{opacity:.3}
+  100%{transform:translateY(-110vh) scale(1.1);opacity:0}
+}
+@keyframes heartFloat{
+  0%{transform:translateY(110vh) rotate(0deg);opacity:0}
+  12%{opacity:.45} 85%{opacity:.15}
+  100%{transform:translateY(-20vh) rotate(22deg);opacity:0}
+}
+
+.content{
+  position:relative; z-index:3; width:min(92vw,430px); height:100%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:24px 14px 34px;
+}
+.eyebrow{
+  position:absolute; top:max(28px,env(safe-area-inset-top));
+  letter-spacing:.22em; text-transform:uppercase; font-size:10px; font-weight:600; opacity:.78;
+}
+.title{
+  position:absolute; top:10.5%; text-align:center;
+  font-size:clamp(22px,6vw,30px); font-weight:300; letter-spacing:.02em;
+  text-shadow:0 3px 20px rgba(100,25,52,.18);
+}
+.title span{display:block; font-size:12px; letter-spacing:.18em; margin-top:7px; opacity:.75}
+
+.stage{
+  position:relative; width:min(86vw,360px); height:min(86vw,360px);
+  margin-top:5vh; perspective:900px;
+}
+.pedestal{
+  position:absolute; left:50%; bottom:5%; width:92%; height:18%;
+  transform:translateX(-50%); border-radius:50%;
+  background:linear-gradient(#e9a1b6,#c75c7e);
+  box-shadow: 0 22px 35px rgba(81,17,39,.28), inset 0 2px 8px rgba(255,255,255,.4);
+}
+.pedestal:after{
+  content:""; position:absolute; inset:9% 2%; border-radius:50%;
+  border:1px solid rgba(255,236,243,.65); box-shadow:0 0 18px rgba(255,255,255,.2);
+}
+.gift{
+  position:absolute; left:50%; bottom:14%; width:72%; height:57%;
+  transform:translateX(-50%); filter:drop-shadow(0 20px 16px var(--shadow));
+  transition:transform .8s cubic-bezier(.2,.9,.25,1);
+  cursor: pointer;
+}
+.box{
+  position:absolute; left:0; right:0; bottom:0; height:70%; border-radius:4% 4% 8% 8%;
+  background: linear-gradient(90deg,rgba(255,255,255,.08),transparent 24%,rgba(122,25,54,.08) 100%), linear-gradient(145deg,#f7d8e3,#d77b9a);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65), inset 0 -12px 25px rgba(126,36,66,.12);
+}
+.box:before{
+  content:""; position:absolute; left:0; right:0; top:-8%; height:18%; border-radius:5%;
+  background:linear-gradient(145deg,#ffe8f0,#d985a1); box-shadow:0 4px 7px rgba(94,19,45,.13);
+}
+.vertical-ribbon{
+  position:absolute; z-index:5; left:43%; top:0; width:15%; height:100%;
+  background:linear-gradient(90deg,#edc0cf,#fff3f7 45%,#e2afc2);
+  box-shadow:inset 1px 0 rgba(255,255,255,.5),inset -1px 0 rgba(122,35,65,.08);
+}
+.monogram{
+  position:absolute; z-index:6; left:50%; top:44%; width:46%; aspect-ratio:1;
+  transform:translate(-50%,-50%); border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background: radial-gradient(circle at 35% 28%, var(--gold-hi), var(--gold) 55%, #d9ab5f 100%);
+  box-shadow: 0 3px 10px rgba(90,17,42,.28), inset 0 2px 4px rgba(255,255,255,.8), inset 0 -4px 8px rgba(150,90,20,.25), 0 0 0 2px rgba(255,255,255,.5);
+  animation:monogramPulse 3.2s ease-in-out infinite;
+}
+.monogram .letters{
+  font-family: Georgia, "Times New Roman", serif; font-style:italic; font-weight:700;
+  font-size:clamp(15px,4.6vw,20px); color:#8a4a2a; letter-spacing:1px;
+  text-shadow:0 1px 0 rgba(255,255,255,.5); display:flex; align-items:center; gap:3px;
+}
+.monogram .amp{font-size:.7em; font-style:normal; opacity:.75; transform:translateY(-1px)}
+@keyframes monogramPulse{
+  0%,100%{transform:translate(-50%,-50%) scale(1);}
+  50%{transform:translate(-50%,-50%) scale(1.045);}
+}
+.lid{
+  position:absolute; z-index:4; left:-5%; right:-5%; top:0; height:28%; border-radius:5%;
+  transform-origin:12% 90%; background:linear-gradient(145deg,#ffe8f0,#e09ab0);
+  box-shadow:0 7px 10px rgba(90,18,43,.18),inset 0 1px rgba(255,255,255,.75);
+  transition:transform 1.05s cubic-bezier(.18,.86,.22,1), top 1.05s cubic-bezier(.18,.86,.22,1);
+}
+.lid:after{
+  content:""; position:absolute; left:0; right:0; top:42%; height:20%;
+  background:linear-gradient(90deg,#e7b4c7,#fff0f5 46%,#dca5ba);
+}
+.bow{
+  position:absolute; z-index:7; left:50%; top:-15%; width:78%; height:42%;
+  transform:translateX(-50%); transition:transform 1s cubic-bezier(.18,.86,.22,1);
+}
+.loop{
+  position:absolute; top:8%; width:52%; height:72%; border-radius:70% 25% 65% 30%;
+  background:linear-gradient(135deg,#fff4f8 0%,#f1bdcf 45%,#d66e91 100%);
+  box-shadow:inset 0 2px 5px rgba(255,255,255,.7),0 4px 7px rgba(104,24,50,.12);
+}
+.loop.left{left:0; transform:rotate(-18deg)}
+.loop.right{right:0; transform:scaleX(-1) rotate(-18deg)}
+.knot{
+  position:absolute; left:50%; top:35%; width:25%; aspect-ratio:1; transform:translate(-50%,-50%);
+  border-radius:45%; background:radial-gradient(circle at 35% 25%,#fff,#efb1c5 55%,#d5668c);
+  box-shadow:0 3px 7px rgba(90,17,42,.2);
+}
+.touch-label{
+  position:absolute; z-index:12; left:50%; top:88%; transform:translateX(-50%); white-space:nowrap;
+  font-size:clamp(12px,3.4vw,15px); letter-spacing:.11em; text-transform:uppercase;
+  text-shadow:0 2px 12px rgba(90,15,42,.35); animation:pulseLabel 2s ease-in-out infinite; color:white;
+}
+@keyframes pulseLabel{50%{opacity:.62; transform:translateX(-50%) translateY(-2px)}}
+
+.scene.open .lid{transform:rotate(-18deg) translate(-5px,-30px); top:-7%}
+.scene.open .bow{transform:translateX(-50%) translateY(-28px) rotate(-7deg) scale(.96)}
+.scene.open .gift{transform:translateX(-50%) translateY(-5px) scale(1.03)}
+.scene.open .touch-label{pointer-events:none; opacity:0; transition:opacity .35s}
+
+/* ==========================================
+   MAIN CONTENT PAGE
+   ========================================== */
+.main-website {
+  display: none;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  background: linear-gradient(135deg, #2b0818 0%, #52122b 50%, #2b0818 100%);
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+.main-website.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+}
+
+/* Floating Music Bar */
+.music-bar {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 200;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 18px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* 1. Her Solo Profile Section */
+.her-section {
+  text-align: center;
+  padding-top: 40px;
+  margin-bottom: 30px;
+}
+.avatar-wrapper {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  margin: 0 auto 15px;
+}
+.avatar-glow {
+  position: absolute; inset: -8px; border-radius: 50%;
+  background: linear-gradient(45deg, var(--accent-pink), var(--gold));
+  filter: blur(12px); opacity: 0.8; animation: auraPulse 3s infinite alternate;
+}
+@keyframes auraPulse {
+  0% { transform: scale(0.95); opacity: 0.6; }
+  100% { transform: scale(1.1); opacity: 0.9; }
+}
+.her-avatar {
+  position: relative; width: 100%; height: 100%; border-radius: 50%;
+  border: 3px solid #fff; object-fit: cover; box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+.birthday-title {
+  font-size: 1.6rem; font-weight: 300;
+  background: linear-gradient(45deg, #fff, #ffb3c1);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;
+}
+.birthday-subtitle {
+  font-size: 0.85rem; color: #f7cad0; opacity: 0.85; line-height: 1.6; max-width: 290px; margin: 0 auto;
+}
+
+/* 2. Overlapping Artistic Photo Stack */
+.art-stack-container {
+  display: flex; flex-direction: column; align-items: center;
+  margin-bottom: 50px;
+}
+.section-title {
+  font-size: 0.95rem; letter-spacing: 2px; color: var(--gold);
+  text-transform: uppercase; margin-bottom: 20px; text-align: center;
+}
+.art-stack {
+  position: relative; width: 300px; height: 380px;
+}
+.polaroid-card {
+  position: absolute; width: 230px; background: #fff; padding: 12px 12px 25px 12px;
+  border-radius: 4px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); color: #333; cursor: pointer;
+  transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.polaroid-card img {
+  width: 100%; height: 210px; object-fit: cover; border-radius: 2px; margin-bottom: 10px;
+}
+.polaroid-card .caption {
+  font-family: 'Courier New', Courier, monospace; font-size: 0.85rem;
+  text-align: center; color: #555; font-weight: bold;
+}
+.card-1 { top: 10px; left: 10px; transform: rotate(-8deg); z-index: 1; }
+.card-2 { top: 30px; right: 10px; transform: rotate(6deg); z-index: 2; }
+.card-3 { top: 60px; left: 35px; transform: rotate(-3deg); z-index: 3; }
+
+.polaroid-card.active {
+  z-index: 50 !important;
+  transform: scale(1.15) rotate(0deg) translateY(-15px) !important;
+  box-shadow: 0 25px 50px rgba(255, 117, 140, 0.6);
+}
+
+/* =====================================================
+   TIMELINE SECTION
+===================================================== */
+.timeline-section{
+    position:relative;
+    width:100%;
+    max-width:800px;
+    padding:50px 5% 40px;
+    background:
+        radial-gradient(circle at 12% 8%,rgba(255,255,255,.15),transparent 32%),
+        linear-gradient(180deg, rgba(255,255,255,.05) 0%, rgba(255,255,255,.1) 100%);
+    border-radius: 24px;
+    margin: 20px auto;
+    backdrop-filter: blur(10px);
+}
+
+.timeline-heading{
+    text-align:center;
+    max-width:500px;
+    margin:0 auto 30px;
+}
+
+.eyebrow-sm{
+    display:block;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    font-size:10px;
+    font-weight:600;
+    color:var(--pink-2);
+    margin-bottom:10px;
+}
+
+.timeline-heading h2{
+    font-family:Georgia,"Times New Roman",serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:clamp(24px,6vw,32px);
+    color:var(--pink-1);
+    margin:0;
+}
+
+.timeline-heading p{
+    margin:10px 0 0;
+    font-size:13px;
+    line-height:1.7;
+    color:#f7cad0;
+    opacity:.85;
+}
+
+.timeline-viewport{
+    max-width:600px;
+    max-height:480px;
+    margin:0 auto;
+    overflow-y:auto;
+    position:relative;
+    padding:10px 5px;
+    scrollbar-width:thin;
+    scrollbar-color: var(--pink-mid) transparent;
+}
+
+.timeline-viewport::-webkit-scrollbar { width:6px; }
+.timeline-viewport::-webkit-scrollbar-thumb {
+    background-color:var(--pink-mid); border-radius:10px;
+}
+
+.timeline{ position:relative; }
+
+.timeline::before{
+    content:""; position:absolute; top:4px; bottom:4px; left:21px; width:3px;
+    border-radius:4px; background:linear-gradient(to bottom,var(--pink-2),var(--pink-dark));
+}
+
+.timeline-item{
+    position:relative; padding-left:56px; margin-bottom:32px;
+}
+.timeline-item:last-child{margin-bottom:0}
+
+.timeline-dot{
+    position:absolute; left:8px; top:6px; width:26px; height:26px;
+    border-radius:50%; background:#fff; border:3px solid var(--pink-mid);
+    box-shadow:0 3px 8px var(--shadow); z-index:2;
+    transition:transform .3s ease, border-color .3s ease;
+}
+
+.timeline-dot::after{
+    content:"♥"; position:absolute; inset:0; display:flex;
+    align-items:center; justify-content:center; font-size:9px; color:var(--pink-mid);
+}
+
+.timeline-item.active .timeline-dot{
+    transform:scale(1.25); border-color:var(--gold); background:var(--pink-light);
+}
+
+.timeline-card{
+    width:100%; text-align:left; background:#fff; border:none;
+    border-radius:18px; padding:0; overflow:hidden;
+    box-shadow:0 8px 20px rgba(0,0,0,.25); cursor:pointer;
+    font-family:inherit; -webkit-tap-highlight-color:transparent;
+    transition:transform .3s ease, box-shadow .3s ease, border .3s ease;
+    border:2px solid transparent;
+}
+
+.timeline-card:hover,
+.timeline-card:focus-visible,
+.timeline-item.active .timeline-card{
+    transform:translateY(-3px); box-shadow:0 12px 26px rgba(255,117,140,.35);
+    border-color:var(--gold);
+}
+
+.timeline-thumb{
+    width:100%; aspect-ratio:16/10; display:block;
+    background:var(--pink-light); object-fit:cover;
+}
+
+.timeline-card-body{ display:block; padding:16px 20px 18px; }
+
+.timeline-date{
+    display:inline-block; font-size:10px; font-weight:700; letter-spacing:.08em;
+    color:#fff; background:var(--pink-dark); padding:4px 11px;
+    border-radius:999px; margin-bottom:8px;
+}
+
+.timeline-title{
+    font-family:Georgia,"Times New Roman",serif; font-style:italic;
+    font-size:18px; color:#5c1730; margin:0 0 6px;
+}
+
+.timeline-hint{ font-size:11px; letter-spacing:.03em; color:#b47286; margin:0; }
+
+/* =====================================================
+   PHOTO MODAL
+===================================================== */
+.modal-overlay{
+    position:fixed; inset:0; background:rgba(20, 5, 12, 0.82);
+    display:flex; align-items:center; justify-content:center;
+    padding:6%; z-index:300; opacity:0; pointer-events:none;
+    transition:opacity .25s ease; backdrop-filter: blur(5px);
+}
+
+.modal-overlay.open{ opacity:1; pointer-events:auto; }
+
+.modal-box{
+    background:#fff; border-radius:22px; max-width:480px; width:100%;
+    overflow:hidden; box-shadow:0 25px 50px rgba(0,0,0,.5);
+    transform:scale(.9); transition:transform .25s ease;
+}
+
+.modal-overlay.open .modal-box{transform:scale(1)}
+.modal-img{ width:100%; aspect-ratio:16/10; object-fit:cover; display:block; }
+.modal-body{padding:24px 24px 28px; position:relative}
+.modal-heart{ display:block; font-size:24px; color:var(--pink-dark); margin-bottom:10px; }
+
+.modal-date{
+    display:inline-block; font-size:10px; font-weight:700; letter-spacing:.08em;
+    color:#fff; background:var(--pink-dark); padding:4px 11px;
+    border-radius:999px; margin-bottom:10px;
+}
+
+.modal-title{
+    font-family:Georgia,"Times New Roman",serif; font-style:italic;
+    font-size:20px; color:#5c1730; margin:0 0 8px;
+}
+
+.modal-caption{ font-size:14px; line-height:1.7; color:#7a3d50; margin:0; }
+
+.modal-close{
+    position:absolute; top:12px; right:14px; background:rgba(92,20,47,.55);
+    color:#fff; border:none; width:32px; height:32px; border-radius:50%;
+    font-size:18px; line-height:1; cursor:pointer; display:flex;
+    align-items:center; justify-content:center; z-index:2;
+}
+
+/* =====================================================
+   GALLERY SECTION WITH DIFFERENT TRANSITIONS
+===================================================== */
+.gallery-section {
+    width: 100%; max-width: 800px; padding: 40px 5% 60px;
+    text-align: center; opacity: 0; transform: translateY(40px);
+    transition: opacity 1s ease, transform 1s ease; display: none;
+}
+
+.gallery-section.visible { display: block; opacity: 1; transform: translateY(0); }
+
+.gallery-container {
+    position: relative; max-width: 550px; height: 350px;
+    margin: 24px auto 0; border-radius: 20px; overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0,0,0,.4); background: #fff;
+}
+
+.gallery-photo {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; opacity: 0; transition: all 0.8s ease-in-out;
+}
+
+/* TRANSITION TYPES */
+.gallery-photo.trans-fade { transform: scale(1); opacity: 0; }
+.gallery-photo.trans-fade.active { opacity: 1; }
+.gallery-photo.trans-zoom-in { transform: scale(0.7); opacity: 0; }
+.gallery-photo.trans-zoom-in.active { transform: scale(1); opacity: 1; }
+.gallery-photo.trans-slide-left { transform: translateX(100%); opacity: 0; }
+.gallery-photo.trans-slide-left.active { transform: translateX(0); opacity: 1; }
+.gallery-photo.trans-zoom-out { transform: scale(1.3); opacity: 0; }
+.gallery-photo.trans-zoom-out.active { transform: scale(1); opacity: 1; }
+.gallery-photo.trans-slide-up { transform: translateY(100%); opacity: 0; }
+.gallery-photo.trans-slide-up.active { transform: translateY(0); opacity: 1; }
+.gallery-photo.trans-blur { filter: blur(12px); opacity: 0; }
+.gallery-photo.trans-blur.active { filter: blur(0); opacity: 1; }
+
+.final-message {
+    max-width: 550px; margin: 30px auto 0; padding: 24px;
+    background: rgba(255,255,255,0.95); border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(0,0,0,.3); color: #5c1730;
+    opacity: 0; transform: scale(0.95); transition: opacity 1s ease, transform 1s ease;
+}
+
+.final-message.visible { opacity: 1; transform: scale(1); }
+.final-message h3 { font-family: Georgia, serif; font-style: italic; color: var(--pink-dark); margin: 0 0 10px; font-size: 24px; }
+.final-message p { margin: 0; font-size: 14px; line-height: 1.7; color: #7a3d50; }
+
+@media (max-width:480px){
+    .timeline::before{left:18px}
+    .timeline-item{padding-left:46px}
+    .timeline-dot{left:5px;width:24px;height:24px}
+    .gallery-container{height: 270px;}
+}
+.polaroid-card img,
+.timeline-thumb,
+.modal-img,
+.gallery-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Audio Player -->
+<audio id="bgMusic" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-piano-112199.mp3" type="audio/mpeg" />
+</audio>
+
+<!-- SECTION 1: UNBOXING -->
+<main class="scene" id="scene">
+  <div class="glow"></div>
+  <div class="sparkles" id="sparkles"></div>
+  <div class="hearts" id="hearts"></div>
+
+  <section class="content">
+    <div class="eyebrow">A little surprise</div>
+    <div class="title">
+      Something special is waiting for you
+      <span>made with love ♥</span>
+    </div>
+
+    <div class="stage" aria-label="Gift box">
+      <div class="pedestal"></div>
+      <div class="gift" id="gift">
+        <div class="box"></div>
+        <div class="vertical-ribbon"></div>
+        <div class="monogram">
+          <span class="letters">B<span class="amp">&amp;</span>S</span>
+        </div>
+        <div class="lid"></div>
+        <div class="bow">
+          <div class="loop left"></div>
+          <div class="loop right"></div>
+          <div class="knot"></div>
+        </div>
+      </div>
+      <span class="touch-label" id="touchLabel">Touch to open</span>
+    </div>
+  </section>
+</main>
+
+<!-- SECTION 2: MAIN WEBSITE -->
+<div class="main-website" id="mainWebsite">
+  
+  <div class="music-bar" id="musicBtn">
+    <span id="musicIcon">🎵</span> <span id="musicText">الموسيقى شغالة</span>
+  </div>
+
+  <!-- 1. Her Solo Section -->
+  <section class="her-section">
+    <div class="avatar-wrapper">
+      <div class="avatar-glow"></div>
+      <img src="16.jpeg" class="her-avatar" alt="Her Photo">
+    </div>
+    <h1 class="birthday-title">كل سنة وأنتِ أميرتي ❤️</h1>
+    <p class="birthday-subtitle">كل سنة وانتي طيبه وبخير ي بسبوسه وعقبال سنين كتير ف صحه وسعاده وهنا ي بطه وان شاء الله عيد ميلادك الجاي ف بيتنا ي عجله   ✨</p>
+  </section>
+
+  <!-- 2. Scattered Stack Section -->
+  <section class="art-stack-container">
+    <div class="section-title">✦ حكايتنا في صور ✦</div>
+    <div class="art-stack" id="artStack">
+      <div class="polaroid-card card-1 active">
+        <img src="1.jpeg" alt="Couple 1">
+        <div class="caption">أول ضحكة سوا ✨</div>
+      </div>
+      <div class="polaroid-card card-2">
+        <img src="2.jpeg" alt="Couple 2">
+        <div class="caption">يوم مميز في ذاكرتنا 💍</div>
+      </div>
+      <div class="polaroid-card card-3">
+        <img src="26.jpeg" alt="Couple 3">
+        <div class="caption">مع بعض لأخر العمر ❤️</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. TIMELINE SECTION -->
+  <section class="timeline-section" id="timelineSection">
+      <div class="timeline-heading">
+          <span class="eyebrow-sm">♥ And this is only the beginning</span>
+          <h2>Moments worth keeping</h2>
+          <p>A few pages from our story so far — auto-playing through each event.</p>
+      </div>
+
+      <div class="timeline-viewport" id="timelineViewport">
+          <div class="timeline" id="timeline"></div>
+      </div>
+  </section>
+
+  <!-- 4. GALLERY SECTION -->
+  <section class="gallery-section" id="gallerySection">
+      <div class="timeline-heading">
+          <span class="eyebrow-sm">♥ Photo Memories</span>
+          <h2>A Snapshot of Us</h2>
+      </div>
+
+      <div class="gallery-container" id="galleryContainer"></div>
+
+      <div class="final-message" id="finalMessage">
+          <h3>To Many More Memories ♥</h3>
+          <p>Every moment with you is a favorite memory in the making. Thank you for being a part of this amazing journey!</p>
+      </div>
+  </section>
+
+</div>
+
+<!-- Modal Dialog -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+        <img class="modal-img" id="modalImg" src="" alt="">
+        <div class="modal-body">
+            <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+            <span class="modal-heart" aria-hidden="true">♥</span>
+            <span class="modal-date" id="modalDate"></span>
+            <p class="modal-title" id="modalTitle"></p>
+            <p class="modal-caption" id="modalCaption"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+
+  // Function to lock user touch and scroll interactions
+function lockUserInteractions() {
+  const preventScroll = (e) => {
+    // Prevent default scroll/swipe actions
+    e.preventDefault();
+  };
+
+  // Prevent mouse wheel scrolling
+  window.addEventListener('wheel', preventScroll, { passive: false });
+
+  // Prevent touch scrolling / dragging on mobile devices
+  window.addEventListener('touchmove', preventScroll, { passive: false });
+
+  // Prevent keyboard scrolling (Arrow keys, Page Down, Spacebar)
+  window.addEventListener('keydown', (e) => {
+    const forbiddenKeys = ['ArrowUp', 'ArrowDown', 'Space', 'PageUp', 'PageDown', 'Home', 'End'];
+    if (forbiddenKeys.includes(e.code) || forbiddenKeys.includes(e.key)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+}
+
+// Call the function when the page initializes
+lockUserInteractions();
+
+// Background Sparkles & Hearts
+function addFloating(){
+  const sparkles = document.getElementById('sparkles');
+  const hearts = document.getElementById('hearts');
+  for(let i=0;i<25;i++){
+    const s=document.createElement('i');
+    s.className='sparkle';
+    s.style.left=(Math.random()*100)+'%'; s.style.top=(55+Math.random()*55)+'%';
+    s.style.animationDuration=(5+Math.random()*7)+'s'; s.style.transform=`scale(${.5+Math.random()})`;
+    sparkles.appendChild(s);
+  }
+  for(let i=0;i<8;i++){
+    const h=document.createElement('i');
+    h.className='heart'; h.textContent=Math.random()>.45?'♡':'♥';
+    h.style.left=(Math.random()*100)+'%'; h.style.animationDuration=(11+Math.random()*9)+'s';
+    hearts.appendChild(h);
+  }
+}
+addFloating();
+
+// Timeline Data
+const events = [
+    { date: "Jun 8, 2021", title: "The Day We Became us", caption: "ده يوم الخطوبة ف البيت.", image: "3.jpeg" },
+    { date: "Jul 15, 2021", title: "Our First Coffee", caption: " ده يوم ماتش منتخب مصر والارجنتين اللي خرجنا فيه وخسرنا مع الاسف بس ده كان يوم جميل.", image: "4.jpeg" },
+    { date: "Oct 31, 2021", title: "Late Night Walk", caption:"walking under the autumn leaves,talking about everything." , image: "5.jpeg" },
+    { date: "Dec 25, 2021", title: "First Holiday Together", caption: "Exchanging small thoughtful gifts and watching fairy lights dance on the wall.", image: "6.jpeg" },
+    { date: "Feb 14, 2022", title: "First Valentine's", caption: "Nervous flowers, a too-long menu, and a night neither of us wanted to end.", image: "7.jpeg" },
+    { date: "May 20, 2022", title: "Weekend Getaway", caption: "Escaping the city noise to watch the sunset over quiet hills.", image: "8.jpeg" },
+    { date: "Sep 12, 2022", title: "Concert Night", caption: "Singing at the top of our lungs to our favorite songs in a crowd of thousands.", image: "9.jpeg" },
+    { date: "Dec 31, 2022", title: "New Year Countdown", caption: "Welcoming a brand new year wrapped up in cozy blankets and holding hands.", image: "10.jpeg" },
+    { date: "Apr 05, 2023", title: "Spring Picnic", caption: "Homemade sandwiches, cherry blossoms falling, and afternoon naps in the park.", image: "11.jpeg" },
+    { date: "Aug 30, 2023", title: "Our Trip Away", caption: "Sunburnt shoulders, terrible directions, and the best week of the year.", image: "12.jpeg" },
+    { date: "Jan 18, 2024", title: "Snowy Afternoon", caption: "Hot cocoa, foggy windows, and playing board games while the storm raged outside.", image: "13.jpeg" },
+    { date: "Jun 08, 2024", title: "3 Year Anniversary", caption: "Looking back at three whole years of memories, growth, and endless love.", image: "14.jpeg" },
+    { date: "Nov 11, 2024", title: "Moving In Together", caption: "Boxes everywhere, one kettle between us, and finally a place that felt like ours.", image: "15.jpeg" },
+    { date: "Feb 01, 2025", title: "Decorating Our Space", caption: "Paint on our clothes, assembling flat-pack furniture, and turning a house into a home.", image: "17.jpeg" },
+    { date: "Today", title: "This Birthday", caption: "Another year to add to the story — here's to many more pages together.", image: "18.jpeg" }
+];
+
+const galleryPhotos = [
+    { url: "19.jpeg", transition: "trans-fade" },
+    { url: "20.jpeg", transition: "trans-fade" },
+    { url: "21.jpeg", transition: "trans-zoom-in" },
+    { url: "22.jpeg", transition: "trans-slide-left" },
+    { url: "23.jpeg", transition: "trans-zoom-out" },
+    { url: "24.jpeg", transition: "trans-slide-up" },
+    { url: "25.jpeg", transition: "trans-blur" }
+];
+
+// Open Gift Event
+const scene = document.getElementById('scene');
+const gift = document.getElementById('gift');
+const mainWebsite = document.getElementById('mainWebsite');
+const audio = document.getElementById('bgMusic');
+
+function openGift() {
+  if(scene.classList.contains('open')) return;
+  scene.classList.add('open');
+
+  audio.currentTime = 0;
+  audio.play().catch(e => console.log("Audio waiting for user gesture"));
+  updateMusicUI(true);
+
+  setTimeout(() => {
+    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+  }, 400);
+
+  setTimeout(()=>{
+    scene.style.display = 'none';
+    mainWebsite.classList.add('active');
+    
+    // بدء تقليب الكروت أولاً بفاصل 3.5 ثوانٍ لكل كارت
+    startAutoSlideAndThenTimeline();
+
+  }, 1200);
+}
+
+gift.addEventListener('click', openGift);
+
+// Polaroid Cards Interaction
+const stackCards = document.querySelectorAll('.polaroid-card');
+let currentIndex = 0;
+let slideInterval;
+
+function startAutoSlideAndThenTimeline() {
+  currentIndex = 0;
+  stackCards.forEach(c => c.classList.remove('active'));
+  stackCards[0].classList.add('active');
+
+  let cycles = 0;
+  // عرض كل صورة لمدة 3.5 ثوانٍ
+  slideInterval = setInterval(() => {
+    stackCards.forEach(c => c.classList.remove('active'));
+    currentIndex = (currentIndex + 1) % stackCards.length;
+    stackCards[currentIndex].classList.add('active');
+    cycles++;
+
+    // بعد ما يلف على الـ 3 صور كاملين، يبدأ الـ Timeline
+    if(cycles >= 3) {
+      clearInterval(slideInterval);
+      setTimeout(() => {
+        triggerCardSequence(0);
+      }, 3500);
+    }
+  }, 3500);
+}
+
+// Timeline Elements
+const timelineEl = document.getElementById("timeline");
+const modalOverlay = document.getElementById("modalOverlay");
+const modalImg = document.getElementById("modalImg");
+const modalDate = document.getElementById("modalDate");
+const modalTitle = document.getElementById("modalTitle");
+const modalCaption = document.getElementById("modalCaption");
+const modalClose = document.getElementById("modalClose");
+
+const gallerySection = document.getElementById("gallerySection");
+const galleryContainer = document.getElementById("galleryContainer");
+const finalMessage = document.getElementById("finalMessage");
+
+let timelineIndex = 0;
+let autoSequenceTimeout = null;
+
+events.forEach((ev, i) => {
+    const item = document.createElement("div");
+    item.className = "timeline-item";
+    item.setAttribute("data-index", i);
+    item.innerHTML = `
+        <div class="timeline-dot"></div>
+        <button class="timeline-card" type="button">
+            <img class="timeline-thumb" src="${ev.image}" alt="${ev.title}">
+            <span class="timeline-card-body">
+                <span class="timeline-date">${ev.date}</span>
+                <p class="timeline-title">${ev.title}</p>
+                <p class="timeline-hint">Tap to read story</p>
+            </span>
+        </button>
+    `;
+
+    item.querySelector(".timeline-card").addEventListener("click", () => {
+        clearTimeout(autoSequenceTimeout);
+        triggerCardSequence(i);
+    });
+    
+    timelineEl.appendChild(item);
+});
+
+const timelineItems = document.querySelectorAll(".timeline-item");
+
+function triggerCardSequence(index) {
+    if (index >= events.length) {
+        startGallerySequence();
+        return;
+    }
+
+    timelineIndex = index;
+    timelineItems.forEach(item => item.classList.remove("active"));
+    const targetItem = timelineItems[timelineIndex];
+    targetItem.classList.add("active");
+
+    targetItem.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    autoSequenceTimeout = setTimeout(() => {
+        openModal(timelineIndex);
+
+        autoSequenceTimeout = setTimeout(() => {
+            closeModal();
+
+            autoSequenceTimeout = setTimeout(() => {
+                if (timelineIndex + 1 < events.length) {
+                    triggerCardSequence(timelineIndex + 1);
+                } else {
+                    startGallerySequence();
+                }
+            }, 600);
+
+        }, 2500);
+
+    }, 700);
+}
+
+function openModal(i){
+    const ev = events[i];
+    modalImg.src = ev.image;
+    modalImg.alt = ev.title;
+    modalDate.textContent = ev.date;
+    modalTitle.textContent = ev.title;
+    modalCaption.textContent = ev.caption;
+    modalOverlay.classList.add("open");
+}
+
+function closeModal(){ modalOverlay.classList.remove("open"); }
+
+function startGallerySequence() {
+    gallerySection.classList.add("visible");
+    gallerySection.scrollIntoView({ behavior: "smooth" });
+
+    galleryContainer.innerHTML = "";
+    galleryPhotos.forEach((photo, idx) => {
+        const img = document.createElement("img");
+        img.src = photo.url;
+        img.className = `gallery-photo ${photo.transition}`;
+        img.id = `galleryImg-${idx}`;
+        galleryContainer.appendChild(img);
+    });
+
+    let photoIdx = 0;
+    function showNextPhoto() {
+        if (photoIdx >= galleryPhotos.length) {
+            setTimeout(() => { 
+                finalMessage.classList.add("visible");
+                
+                // إعادة الضبط والرجوع للبدايه بعد 3 ثوانٍ
+                setTimeout(() => {
+                    resetToStart();
+                }, 3000);
+
+            }, 500);
+            return;
+        }
+        const currentImg = document.getElementById(`galleryImg-${photoIdx}`);
+        if(currentImg) currentImg.classList.add("active");
+        photoIdx++;
+        setTimeout(showNextPhoto, 2200);
+    }
+
+    setTimeout(showNextPhoto, 1000);
+}
+
+// دالة إعادة العرض إلى الصفحة الأولى وإيقاف الموسيقى
+function resetToStart() {
+    // إيقاف الموسيقى
+    audio.pause();
+    audio.currentTime = 0;
+    updateMusicUI(false);
+
+    // إلغاء أي مؤقتات شغالين
+    clearTimeout(autoSequenceTimeout);
+    if(slideInterval) clearInterval(slideInterval);
+
+    // إخفاء الأقسام وإعادة الحالة
+    mainWebsite.classList.remove('active');
+    scene.style.display = 'flex';
+    scene.classList.remove('open');
+    gallerySection.classList.remove('visible');
+    finalMessage.classList.remove('visible');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+modalClose.addEventListener("click", () => { clearTimeout(autoSequenceTimeout); closeModal(); });
+modalOverlay.addEventListener("click", (e) => { if(e.target === modalOverlay) { clearTimeout(autoSequenceTimeout); closeModal(); } });
+
+// Music Controls
+const musicBtn = document.getElementById('musicBtn');
+function updateMusicUI(isPlaying) {
+  if (isPlaying) {
+    document.getElementById('musicIcon').textContent = '🎵';
+    document.getElementById('musicText').textContent = 'الموسيقى شغالة';
+  } else {
+    document.getElementById('musicIcon').textContent = '🔇';
+    document.getElementById('musicText').textContent = 'إيقاف';
+  }
+}
+
+musicBtn.addEventListener('click', () => {
+  if (audio.paused) {
+    audio.play();
+    updateMusicUI(true);
+  } else {
+    audio.pause();
+    updateMusicUI(false);
+  }
+});
+</script>
+
+</body>
+</html>
